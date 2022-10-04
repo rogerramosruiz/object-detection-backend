@@ -1,0 +1,11 @@
+env/
+__pycache__
+*.jpg
+*.jpeg
+*.png
+plastic/
+*.weights
+.env
+*.mp4
+*.cfg
+.names
