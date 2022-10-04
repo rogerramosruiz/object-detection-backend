@@ -5,9 +5,8 @@ from typing import List
 from fastapi import FastAPI, Form, UploadFile, WebSocket
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+
 from opencv import apiImage, apiVideo, livevideo
-
-
 from utilities import randomFilename
 
 
@@ -25,12 +24,6 @@ app.add_middleware(
 app.mount("/public", StaticFiles(directory=publicDir), name="public")
 
 GPU = os.getenv('GPU', 'False').lower() == 'true'
-if GPU:
-    print('Using GPU')
-else:
-    print('Not using GPU')
-
-
 @app.get('/')
 def get():
     return {'meesage': "Object Detection"}
@@ -85,4 +78,6 @@ async def websocket_endpoint(websocket: WebSocket):
     await livevideo(websocket)
 
 if __name__ == '__main__':
-     uvicorn.run("main:app", host='0.0.0.0', port=8000, reload=True, debug=True)
+    prodcution = os.getenv('production').lower() == 'true'
+    port = int(os.getenv('port', 8000))
+    uvicorn.run("main:app", host = '0.0.0.0', port = port, reload = not prodcution, debug = not prodcution)
