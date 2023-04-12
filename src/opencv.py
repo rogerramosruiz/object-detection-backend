@@ -4,16 +4,15 @@ import numpy as np
 import os
 import base64
 
-from utilities import loadColors, getModel
+from config.environment import model_cfg
+from helpers.utilities import load_colors, get_model
 
-modelCfg = os.getenv('modelcfg')
 
-colors, classes = loadColors()
-
+colors, classes = load_colors()
 
 def createNet(model):
-    weights = getModel(model)
-    net = cv.dnn.readNet(weights, modelCfg)
+    weights = get_model(model)
+    net = cv.dnn.readNet(weights, model_cfg)
     layer_names = net.getLayerNames()
     output_layers = [layer_names[i-1] for i in net.getUnconnectedOutLayers()]
     return net, output_layers

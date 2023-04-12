@@ -7,10 +7,10 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 from opencv import apiImage, apiVideo, livevideo
-from utilities import randomFilename
+from helpers.utilities import random_file_name
 
+from config.environment import public_dir, models_dir ,GPU_USE, port, prodcution
 
-publicDir = os.getenv('public_dir')
 
 app = FastAPI()
 
@@ -21,28 +21,26 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"])
 
-app.mount("/public", StaticFiles(directory=publicDir), name="public")
+app.mount("/public", StaticFiles(directory=public_dir), name="public")
 
-GPU = os.getenv('GPU', 'False').lower() == 'true'
 @app.get('/')
 def get():
     return {'meesage': "Object Detection"}
 
 @app.get('/gpu')
 def useGPU():
-    return {'gpu': GPU}
+    return {'gpu': GPU_USE}
 
 @app.get('/models')
 def getModels():
-    modelsDir = 'models'
-    models = os.listdir(modelsDir)
+    models = os.listdir(models_dir)
     return {'models': models}
 
 @app.post('/image')
 async def file(file: UploadFile, model: str= Form(''), confidence: float = Form(0)):
     confidence = confidence / 100
     ext = file.filename.split('.')[-1]
-    fileName = randomFilename()
+    fileName = random_file_name()
     fileName = f'{fileName}.{ext}'
     with open(f'{fileName}', 'wb') as f:
         shutil.copyfileobj(file.file, f)
@@ -53,11 +51,11 @@ async def file(file: UploadFile, model: str= Form(''), confidence: float = Form(
 async def file(file: UploadFile, model: str= Form(''), confidence: float = Form(0)):
     confidence /= 100
     ext = file.filename.split('.')[-1]
-    fileName = randomFilename()
+    fileName = random_file_name()
     fileName = f'{fileName}.{ext}'
     with open(f'{fileName}', 'wb') as f:
         shutil.copyfileobj(file.file, f)
-    fileName1 = randomFilename()
+    fileName1 = random_file_name()
     videoPath = apiVideo(fileName,fileName1, model, confidence)
     return {'filename':videoPath}
 
@@ -66,7 +64,7 @@ async def file(files: List[UploadFile]):
     savedFiles = []
     for file in files:
         ext = file.filename.split('.')[-1]
-        fileName = randomFilename()
+        fileName = random_file_name()
         fileName = f'{fileName}.{ext}'
         savedFiles.append(fileName)
         with open(f'{fileName}', 'wb') as f:
@@ -78,6 +76,4 @@ async def websocket_endpoint(websocket: WebSocket):
     await livevideo(websocket)
 
 if __name__ == '__main__':
-    prodcution = os.getenv('production').lower() == 'true'
-    port = int(os.getenv('port', 8000))
-    uvicorn.run("main:app", host = '0.0.0.0', port = port, reload = not prodcution, debug = not prodcution)
+    uvicorn.run("main:app", host = '0.0.0.0', port = port, reload = not prodcution)
