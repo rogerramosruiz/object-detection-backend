@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 filenameSize = int(os.getenv('file_name_size'))
-saveDir      = os.getenv('save_dir')
 publicDir    = os.getenv('public_dir')
 modelsDir    = os.getenv('models_dir')
 
@@ -15,7 +14,7 @@ def randomFilename():
     letters = string.ascii_lowercase + string.ascii_uppercase
     while True:
         fileName = ''.join(random.choice(letters) for _ in range(filenameSize))    
-        fileName = f'{publicDir}/{saveDir}/{fileName}'
+        fileName = f'{publicDir}/{fileName}'
         if not os.path.exists(fileName):
             return fileName
 
