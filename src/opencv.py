@@ -4,7 +4,7 @@ import numpy as np
 import os
 import base64
 
-from config.environment import MODEL_CFG
+from config.environment import MODEL_CFG, GPU_USE
 from helpers.utilities import load_colors, get_model
 
 
@@ -13,6 +13,9 @@ colors, classes = load_colors()
 def create_net(model):
     weights = get_model(model)
     net = cv.dnn.readNet(weights, MODEL_CFG)
+    if GPU_USE:
+        net.setPreferableBackend(cv.dnn.DNN_BACKEND_CUDA)
+        net.setPreferableTarget(cv.dnn.DNN_TARGET_CUDA)
     layer_names = net.getLayerNames()
     output_layers = [layer_names[i-1] for i in net.getUnconnectedOutLayers()]
     return net, output_layers
