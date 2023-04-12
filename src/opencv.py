@@ -4,23 +4,23 @@ import numpy as np
 import os
 import base64
 
-from config.environment import model_cfg
+from config.environment import MODEL_CFG
 from helpers.utilities import load_colors, get_model
 
 
 colors, classes = load_colors()
 
-def createNet(model):
+def create_net(model):
     weights = get_model(model)
-    net = cv.dnn.readNet(weights, model_cfg)
+    net = cv.dnn.readNet(weights, MODEL_CFG)
     layer_names = net.getLayerNames()
     output_layers = [layer_names[i-1] for i in net.getUnconnectedOutLayers()]
     return net, output_layers
 
 def predict(net, output_layers, img, confidenceTreshold):
     height, width, _ = img.shape
-    boxsize = ((height + width) / 2)* 0.002
-    boxsize = ceil(boxsize)
+    box_size = ((height + width) / 2)* 0.002
+    box_size = ceil(box_size)
     blob = cv.dnn.blobFromImage(img, 0.00392, (512, 512), (0,0,0), True, crop= False)
     net.setInput(blob)
     outs = net.forward(output_layers)
@@ -49,26 +49,25 @@ def predict(net, output_layers, img, confidenceTreshold):
         x, y, w, h = boxes[i]
         label = str(classes[class_ids[i]])
         color = colors[class_ids[i]]
-        cv.rectangle(img, (x,y), (x + w, y + h), color, boxsize)
-        cv.putText(img, label, (x + 5, y- 10 ), cv.FONT_HERSHEY_DUPLEX, boxsize, color, boxsize)
+        cv.rectangle(img, (x,y), (x + w, y + h), color, box_size)
+        cv.putText(img, label, (x + 5, y- 10 ), cv.FONT_HERSHEY_DUPLEX, box_size, color, box_size)
 
-def apiImage(path, model, confidence=0.5):
+def api_image(path, model, confidence=0.5):
     img = cv.imread(path)
-    net, output_layers = createNet(model)
+    net, output_layers = create_net(model)
     predict(net, output_layers,img,confidence)
     cv.imwrite(path, img)
 
-def apiVideo(path, newVideoPath, model, confidence=0.5):
+def api_video(path, newVideoPath, model, confidence=0.5):
     video = cv.VideoCapture(path)
     size = (int(video.get(3)), int(video.get(4)))
-    fileName = f'{newVideoPath}.mp4'
-    print(fileName)
+    file_name = f'{newVideoPath}.mp4'
     # MPV4 works but not in docker
     # X264 with errors but works for web 
     # H264 with errors  but works for web
 
-    net, output_layers = createNet(model)
-    result = cv.VideoWriter(fileName, cv.VideoWriter_fourcc(*'H264'), video.get(cv.CAP_PROP_FPS), size)
+    net, output_layers = create_net(model)
+    result = cv.VideoWriter(file_name, cv.VideoWriter_fourcc(*'MPV4'), video.get(cv.CAP_PROP_FPS), size)
     while video.isOpened():
         ret, frame = video.read()
         if not ret:
@@ -78,9 +77,9 @@ def apiVideo(path, newVideoPath, model, confidence=0.5):
     video.release()
     result.release()
     os.remove(path)
-    return fileName
+    return file_name
 
-async def livevideo(websocket):
+async def live_video(websocket):
     model, lastmodel = '', '';
     net, output_layers = None, None
     try:
@@ -90,7 +89,7 @@ async def livevideo(websocket):
             lastmodel = model 
             model = data['model']
             if model != lastmodel:
-                net, output_layers = createNet(model)
+                net, output_layers = create_net(model)
             if model == '':
                 continue
 
