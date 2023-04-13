@@ -5,6 +5,8 @@ services:
     build: .
     env_file:
       - .env
+    environment:
+      - GPU=false
     ports:
       - "${port}:${port}"
     volumes:
