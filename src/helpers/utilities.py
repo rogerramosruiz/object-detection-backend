@@ -24,3 +24,7 @@ def get_model(model_dir):
     model_path = os.path.join(WEIGHTS_DIR, model_dir)
     weights   = os.path.join(model_path, os.listdir(model_path)[0]) 
     return weights
+
+def create_public():
+    if not os.path.exists(PUBLIC_DIR):
+        os.mkdir(PUBLIC_DIR)

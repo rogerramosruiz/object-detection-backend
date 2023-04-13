@@ -7,10 +7,12 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 from opencv import api_image, api_video, live_video
-from helpers.utilities import random_file_name
+from helpers.utilities import random_file_name, create_public
 
 from config.environment import PUBLIC_DIR, WEIGHTS_DIR ,GPU_USE, PORT, PRODUCTION
 
+# craete public directory if it dosen't exists
+create_public()
 
 app = FastAPI()
 
