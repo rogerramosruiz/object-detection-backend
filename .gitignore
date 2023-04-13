@@ -3,7 +3,7 @@ __pycache__
 *.jpg
 *.jpeg
 *.png
-plastic/
+model/
 *.weights
 .env
 *.mp4

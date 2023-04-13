@@ -1,0 +1,12 @@
+version: '3'
+services:
+  detection:
+    image: object_detection
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "${port}:${port}"
+    volumes:
+      - ./model:/app/model
+      - ./public:/app/public
