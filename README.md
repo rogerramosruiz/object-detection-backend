@@ -9,7 +9,7 @@
   - [Python virtual environment](#python-virtual-environment)
   - [Model directory](#model-directory)
   - [.env file](#env-file)
-  - [Run](#run)
+- [Run](#run)
 
 ## Stack
 <img src="https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png" height="60"> <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/OpenCV_Logo_with_text.png" height="70"> 
