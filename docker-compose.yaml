@@ -11,4 +11,4 @@ services:
       - "${port}:${port}"
     volumes:
       - ./model:/app/model
-      - ./public:/app/public
+      - ./${PUBLIC_DIR}:/app/public
