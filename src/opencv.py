@@ -70,7 +70,7 @@ def api_video(path, newVideoPath, model, confidence=0.5):
     # H264 with errors  but works for web
 
     net, output_layers = create_net(model)
-    result = cv.VideoWriter(file_name, cv.VideoWriter_fourcc(*'MPV4'), video.get(cv.CAP_PROP_FPS), size)
+    result = cv.VideoWriter(file_name, cv.VideoWriter_fourcc(*'H264'), video.get(cv.CAP_PROP_FPS), size)
     while video.isOpened():
         ret, frame = video.read()
         if not ret:
